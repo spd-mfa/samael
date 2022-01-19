@@ -49,3 +49,6 @@ pub enum Error {
         error: crate::crypto::CryptoError,
     },
 }
+
+unsafe impl Send for Error {}
+unsafe impl Sync for Error {}
