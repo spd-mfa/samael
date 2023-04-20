@@ -41,7 +41,7 @@ impl XmlSecKey {
         let key = unsafe {
             bindings::xmlSecOpenSSLAppKeyLoadMemory(
                 buffer.as_ptr(),
-                buffer.len().try_into().expect("Key buffer length overflow"),
+                buffer.len(),
                 format as u32,
                 null(),
                 null_mut(),
