@@ -7,6 +7,7 @@ use super::error::XmlSecError;
 use super::error::XmlSecResult;
 use super::xmlsec;
 
+use std::convert::TryInto;
 use std::ptr::null;
 use std::ptr::null_mut;
 
@@ -41,7 +42,7 @@ impl XmlSecKey {
         let key = unsafe {
             bindings::xmlSecOpenSSLAppKeyLoadMemory(
                 buffer.as_ptr(),
-                buffer.len(),
+                buffer.len().try_into().expect("Key buffer length overflow"),
                 format as u32,
                 null(),
                 null_mut(),
