@@ -54,7 +54,7 @@ impl SPMetadataExtractor {
         })
     }
 
-    pub fn acs_list(&self) -> Option<Vec<Acs>> {
+    pub fn acs_list(&self) -> Option<Vec<AcsComplete>> {
         let sp_descriptor = self.0.sp_sso_descriptors.as_ref()?.first()?;
         let acs_list = &sp_descriptor.assertion_consumer_services;
 
