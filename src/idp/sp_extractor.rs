@@ -14,6 +14,7 @@ pub struct Acs {
     pub url: String,
 }
 
+#[derive(Debug, Clone)]
 pub struct AcsComplete {
     pub bind_type: BindType,
     pub url: String,
@@ -21,6 +22,7 @@ pub struct AcsComplete {
     pub index: usize,
 }
 
+#[derive(Debug, Clone)]
 pub enum BindType {
     Post,
 }
