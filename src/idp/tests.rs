@@ -102,7 +102,9 @@ fn test_signed_response() {
         not_on_or_after: Some(Utc::now()),
     };
 
-    let out_response = idp.sign_authn_response(&params).expect("failed to created and sign response");
+    let out_response = idp
+        .sign_authn_response(&params)
+        .expect("failed to created and sign response");
 
     let out_xml = out_response
         .to_xml()
@@ -164,7 +166,9 @@ fn test_signed_response_fingerprint() {
         not_on_or_after: Some(Utc::now()),
     };
 
-    let response = idp.sign_authn_response(&params).expect("failed to created and sign response");
+    let response = idp
+        .sign_authn_response(&params)
+        .expect("failed to created and sign response");
     let base64_cert = response
         .signature
         .unwrap()
