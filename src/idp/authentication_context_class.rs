@@ -1,10 +1,10 @@
-use std::{fmt::Display, convert::TryFrom};
+use std::{convert::TryFrom, fmt::Display};
 /// The number of permutations of different characteristics ensures that there is a theoretically infinite number
 /// of unique authentication contexts. The implication is that, in theory, any particular relying party would be
 /// expected to be able to parse arbitrary authentication context declarations and, more importantly, to
 /// analyze the declaration in order to assess the “quality” of the associated authentication assertion. Making
 /// such an assessment is non-trivial.
-/// 
+///
 /// Fortunately, an optimization is possible. In practice many authentication contexts will fall into categories
 /// determined by industry practices and technology. For instance, many B2C web browser authentication
 /// contexts will be (partially) defined by the principal authenticating to the authentication authority through the
@@ -12,12 +12,12 @@ use std::{fmt::Display, convert::TryFrom};
 /// authentication will be common. Of course, the full authentication context is not limited to the specifics of
 /// how the principal authenticated. Nevertheless, the authentication method is often the most visible
 /// characteristic and as such, can serve as a useful classifer for a class of related authentication contexts.
-/// 
+///
 /// The concept is expressed in this specification as a definition of a series of authentication context classes.
 /// Each class defines a proper subset of the full set of authentication contexts. Classes have been chosen
 /// as representative of the current practices and technologies for authentication technologies, and provide
 /// asserting and relying parties a convenient shorthand when referring to authentication context issues.
-/// 
+///
 /// For instance, an authentication authority may include with the complete authentication context declaration
 /// it provides to a relying party an assertion that the authentication context also belongs to an authentication
 /// context class. For some relying parties, this assertion is sufficient detail for it to be able to assign an
@@ -27,7 +27,7 @@ use std::{fmt::Display, convert::TryFrom};
 /// authentication context declaration will simplify how the relying party can express its desires and/or
 /// requirements to an authentication authority.
 ///
-/// Source: 
+/// Source:
 /// Section 3, https://docs.oasis-open.org/security/saml/v2.0/saml-authn-context-2.0-os.pdf
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum AuthenticationContextClass {
@@ -49,7 +49,7 @@ pub enum AuthenticationContextClass {
     /// Reflects no mobile customer registration procedures and a two-factor based authentication, such as
     /// secure device and user PIN. This context class is useful when a service other than the mobile operator
     /// wants to link their customer ID to a mobile supplied two-factor authentication service by capturing mobile
-    /// phone data at enrollment. 
+    /// phone data at enrollment.
     MobileTwoFactorUnregistered,
     /// Reflects mobile contract customer registration procedures and a single factor authentication. For example,
     /// a digital signing device with tamper resistant memory for key storage, such as the mobile MSISDN, but no
@@ -69,11 +69,11 @@ pub enum AuthenticationContextClass {
     /// at some point in the past using any authentication context supported by that authentication authority.
     /// Consequently, a subsequent authentication event that the authentication authority will assert to the relying
     /// party may be significantly separated in time from the principal's current resource access request.
-    /// 
+    ///
     /// The context for the previously authenticated session is explicitly not included in this context class because
     /// the user has not authenticated during this session, and so the mechanism that the user employed to
     /// authenticate in a previous session should not be used as part of a decision on whether to now allow
-    /// access to a resource. 
+    /// access to a resource.
     PreviousSession,
     /// The X509 context class indicates that the principal authenticated by means of a digital signature where the
     /// key was validated as part of an X.509 Public Key Infrastructure.
@@ -85,7 +85,7 @@ pub enum AuthenticationContextClass {
     /// key was validated via an SPKI Infrastructure.
     PublicKeySpki,
     /// This context class indicates that the principal authenticated by means of a digital signature according to
-    /// the processing rules specified in the XML Digital Signature specification [XMLSig]. 
+    /// the processing rules specified in the XML Digital Signature specification [XMLSig].
     XmlDigitalSignature,
     /// The Smartcard class is identified when a principal authenticates to an authentication authority using a
     /// smartcard.
@@ -118,36 +118,86 @@ pub enum AuthenticationContextClass {
     /// token.
     TimeSyncToken,
     /// The Unspecified class indicates that the authentication was performed by unspecified means.
-    Unspecified
+    Unspecified,
 }
 impl AuthenticationContextClass {
     pub fn uri(&self) -> &'static str {
         match self {
-            AuthenticationContextClass::InternetProtocol => "urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol",
-            AuthenticationContextClass::InternetProtocolPassword => "urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocolPassword",
-            AuthenticationContextClass::Kerberos => "urn:oasis:names:tc:SAML:2.0:ac:classes:Kerberos",
-            AuthenticationContextClass::MobileOneFactorUnregistered => "urn:oasis:names:tc:SAML:2.0:ac:classes:MobileOneFactorUnregistered",
-            AuthenticationContextClass::MobileTwoFactorUnregistered => "urn:oasis:names:tc:SAML:2.0:ac:classes:MobileTwoFactorUnregistered",
-            AuthenticationContextClass::MobileOneFactorContract => "urn:oasis:names:tc:SAML:2.0:ac:classes:MobileOneFactorContract",
-            AuthenticationContextClass::MobileTwoFactorContract => "urn:oasis:names:tc:SAML:2.0:ac:classes:MobileTwoFactorContract",
-            AuthenticationContextClass::Password => "urn:oasis:names:tc:SAML:2.0:ac:classes:Password",
-            AuthenticationContextClass::PasswordProtectedTransport => "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport",
-            AuthenticationContextClass::PreviousSession => "urn:oasis:names:tc:SAML:2.0:ac:classes:PreviousSession",
-            AuthenticationContextClass::PublicKeyX509 => "urn:oasis:names:tc:SAML:2.0:ac:classes:X509",
-            AuthenticationContextClass::PublicKeyPgp => "urn:oasis:names:tc:SAML:2.0:ac:classes:PGP",
-            AuthenticationContextClass::PublicKeySpki => "urn:oasis:names:tc:SAML:2.0:ac:classes:SPKI",
-            AuthenticationContextClass::XmlDigitalSignature => "urn:oasis:names:tc:SAML:2.0:ac:classes:XMLDSig",
-            AuthenticationContextClass::Smartcard => "urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard",
-            AuthenticationContextClass::SmartcardPki => "urn:oasis:names:tc:SAML:2.0:ac:classes:SmartcardPKI",
-            AuthenticationContextClass::SoftwarePki => "urn:oasis:names:tc:SAML:2.0:ac:classes:SoftwarePKI",
-            AuthenticationContextClass::Telephony => "urn:oasis:names:tc:SAML:2.0:ac:classes:Telephony",
-            AuthenticationContextClass::NomadTelephony => "urn:oasis:names:tc:SAML:2.0:ac:classes:NomadTelephony",
-            AuthenticationContextClass::PersonalTelephony => "urn:oasis:names:tc:SAML:2.0:ac:classes:PersonalTelephony",
-            AuthenticationContextClass::AuthenticatedTelephony => "urn:oasis:names:tc:SAML:2.0:ac:classes:AuthenticatedTelephony",
-            AuthenticationContextClass::SecureRemotePassword => "urn:oasis:names:tc:SAML:2.0:ac:classes:SecureRemotePassword",
-            AuthenticationContextClass::TlsClient => "urn:oasis:names:tc:SAML:2.0:ac:classes:TLSClient",
-            AuthenticationContextClass::TimeSyncToken => "urn:oasis:names:tc:SAML:2.0:ac:classes:TimeSyncToken",
-            AuthenticationContextClass::Unspecified => "urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified",
+            AuthenticationContextClass::InternetProtocol => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol"
+            }
+            AuthenticationContextClass::InternetProtocolPassword => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocolPassword"
+            }
+            AuthenticationContextClass::Kerberos => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:Kerberos"
+            }
+            AuthenticationContextClass::MobileOneFactorUnregistered => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:MobileOneFactorUnregistered"
+            }
+            AuthenticationContextClass::MobileTwoFactorUnregistered => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:MobileTwoFactorUnregistered"
+            }
+            AuthenticationContextClass::MobileOneFactorContract => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:MobileOneFactorContract"
+            }
+            AuthenticationContextClass::MobileTwoFactorContract => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:MobileTwoFactorContract"
+            }
+            AuthenticationContextClass::Password => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:Password"
+            }
+            AuthenticationContextClass::PasswordProtectedTransport => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+            }
+            AuthenticationContextClass::PreviousSession => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:PreviousSession"
+            }
+            AuthenticationContextClass::PublicKeyX509 => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:X509"
+            }
+            AuthenticationContextClass::PublicKeyPgp => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:PGP"
+            }
+            AuthenticationContextClass::PublicKeySpki => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:SPKI"
+            }
+            AuthenticationContextClass::XmlDigitalSignature => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:XMLDSig"
+            }
+            AuthenticationContextClass::Smartcard => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard"
+            }
+            AuthenticationContextClass::SmartcardPki => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:SmartcardPKI"
+            }
+            AuthenticationContextClass::SoftwarePki => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:SoftwarePKI"
+            }
+            AuthenticationContextClass::Telephony => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:Telephony"
+            }
+            AuthenticationContextClass::NomadTelephony => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:NomadTelephony"
+            }
+            AuthenticationContextClass::PersonalTelephony => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:PersonalTelephony"
+            }
+            AuthenticationContextClass::AuthenticatedTelephony => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:AuthenticatedTelephony"
+            }
+            AuthenticationContextClass::SecureRemotePassword => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:SecureRemotePassword"
+            }
+            AuthenticationContextClass::TlsClient => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:TLSClient"
+            }
+            AuthenticationContextClass::TimeSyncToken => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:TimeSyncToken"
+            }
+            AuthenticationContextClass::Unspecified => {
+                "urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified"
+            }
         }
     }
 }
