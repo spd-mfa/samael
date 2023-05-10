@@ -24,7 +24,7 @@ pub struct AcsComplete {
     pub index: usize,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum BindType {
     Post,
 }
