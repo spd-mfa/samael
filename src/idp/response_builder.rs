@@ -38,9 +38,9 @@ fn build_authn_statement(class: AuthenticationContextClass) -> AuthnStatement {
     }
 }
 
-pub struct ResponseAttribute<'a> {
+pub struct ResponseAttribute {
     pub required_attribute: RequiredAttribute,
-    pub values: &'a [&'a str],
+    pub values: Vec<String>,
 }
 
 fn build_attributes(formats_names_values: &[ResponseAttribute]) -> Vec<Attribute> {
@@ -50,19 +50,19 @@ fn build_attributes(formats_names_values: &[ResponseAttribute]) -> Vec<Attribute
             friendly_name: None,
             name: Some(attr.required_attribute.name.clone()),
             name_format: attr.required_attribute.format.clone(),
-            values: attr.values.iter().map(|value| {
-                AttributeValue {
+            values: attr
+                .values
+                .iter()
+                .map(|value| AttributeValue {
                     attribute_type: Some("xs:string".to_string()),
                     value: Some(value.to_string()),
-                }
-            }).collect()
+                })
+                .collect(),
         })
         .collect()
 }
 
-fn build_assertion(params: &ResponseParams)
-    -> Assertion
-{
+fn build_assertion(params: &ResponseParams) -> Assertion {
     let ResponseParams {
         idp_x509_cert_der: _,
         subject_name_id,
@@ -81,11 +81,9 @@ fn build_assertion(params: &ResponseParams)
     let attribute_statements = if attributes.is_empty() {
         None
     } else {
-        Some(vec![
-            AttributeStatement {
-                attributes: build_attributes(attributes)
-            }
-        ])
+        Some(vec![AttributeStatement {
+            attributes: build_attributes(attributes),
+        }])
     };
 
     Assertion {
