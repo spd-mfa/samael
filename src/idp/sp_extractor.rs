@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use super::error::Error;
 use crate::crypto;
 use crate::metadata::EntityDescriptor;
@@ -14,7 +16,7 @@ pub struct Acs {
     pub url: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AcsComplete {
     pub bind_type: BindType,
     pub url: String,
