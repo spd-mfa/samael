@@ -1,10 +1,10 @@
 pub mod error;
 use self::error::Error;
 
+mod authentication_context_class;
 pub mod response_builder;
 pub mod sp_extractor;
 pub mod verified_request;
-mod authentication_context_class;
 pub use authentication_context_class::*;
 
 #[cfg(test)]
@@ -22,7 +22,7 @@ use crate::crypto::{self};
 use crate::idp::response_builder::{build_response_template, ResponseAttribute};
 use crate::schema::Response;
 use crate::traits::ToXml;
-use chrono::{Utc, DateTime};
+use chrono::{DateTime, Utc};
 
 pub struct IdentityProvider {
     private_key: pkey::PKey<Private>,
@@ -66,7 +66,7 @@ pub struct ResponseParams<'a> {
     pub acs_url: &'a str,
     pub issuer: &'a str,
     pub in_response_to_id: &'a str,
-    pub attributes: &'a [ResponseAttribute<'a>],
+    pub attributes: &'a [ResponseAttribute],
     pub authentication_context: AuthenticationContextClass,
     pub not_before: Option<DateTime<Utc>>,
     pub not_on_or_after: Option<DateTime<Utc>>,
@@ -145,8 +145,10 @@ impl IdentityProvider {
         Ok(certificate.to_der()?)
     }
 
-    pub fn sign_authn_response(&self, params: &ResponseParams) -> Result<Response, Box<dyn std::error::Error>>
-    {
+    pub fn sign_authn_response(
+        &self,
+        params: &ResponseParams,
+    ) -> Result<Response, Box<dyn std::error::Error>> {
         let response = build_response_template(params);
 
         let response_xml_unsigned = response.to_xml()?;
