@@ -60,7 +60,13 @@ impl SPMetadataExtractor {
     }
 
     pub fn acs_list(&self) -> Result<Vec<AcsComplete>, Error> {
-        let sp_descriptor = self.0.sp_sso_descriptors.as_ref()?.first()?;
+        let sp_descriptor = self
+            .0
+            .sp_sso_descriptors
+            .as_ref()
+            .ok_or(Error::NoSPSsoDescriptors)?
+            .first()
+            .ok_or(Error::NoSPSsoDescriptors)?;
         let acs_list = &sp_descriptor.assertion_consumer_services;
 
         let mut result = Vec::new();
