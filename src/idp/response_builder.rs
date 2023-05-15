@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 use crate::attribute::{Attribute, AttributeValue};
 use crate::schema::{
     Assertion, AttributeStatement, AudienceRestriction, AuthnContext, AuthnContextClassRef,
