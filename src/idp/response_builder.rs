@@ -41,7 +41,7 @@ fn build_authn_statement(class: AuthenticationContextClass) -> AuthnStatement {
 
 pub struct ResponseAttribute {
     pub required_attribute: RequiredAttribute,
-    pub values: Vec<Cow<'a, str>>,
+    pub values: Vec<String>,
 }
 
 fn build_attributes(formats_names_values: &[ResponseAttribute]) -> Vec<Attribute> {

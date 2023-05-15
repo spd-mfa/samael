@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 use super::*;
 use chrono::prelude::*;
 
@@ -85,7 +83,7 @@ fn test_signed_response() {
                 name: attr.1.to_string(),
                 format: Some(attr.0.to_string()),
             },
-            values: vec![Cow::from(attr.2)],
+            values: Vec<String>,
         })
         .collect::<Vec<ResponseAttribute>>();
 
