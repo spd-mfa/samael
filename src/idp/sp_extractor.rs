@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use super::error::Error;
 use crate::crypto;
 use crate::metadata::EntityDescriptor;
@@ -14,6 +16,16 @@ pub struct Acs {
     pub url: String,
 }
 
+#[derive(Debug, Clone)]
+pub struct AcsComplete {
+    // I don't like this name anymore than you do. Feel free to change it to something better.
+    pub bind_type: BindType,
+    pub url: String,
+    pub is_default: bool,
+    pub index: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum BindType {
     Post,
 }
@@ -45,6 +57,31 @@ impl SPMetadataExtractor {
             bind_type: BindType::Post,
             url: location.to_string(),
         })
+    }
+
+    pub fn acs_list(&self) -> Result<Vec<AcsComplete>, Error> {
+        let sp_descriptor = self.0.sp_sso_descriptors.as_ref()?.first()?;
+        let acs_list = &sp_descriptor.assertion_consumer_services;
+
+        let mut result = Vec::new();
+        for acs in acs_list {
+            if acs.binding != "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" {
+                continue;
+            }
+
+            result.push(AcsComplete {
+                bind_type: BindType::Post,
+                url: acs.location.clone(),
+                is_default: acs.is_default.unwrap_or(false),
+                index: acs.index,
+            });
+        }
+
+        if result.is_empty() {
+            Err(Error::MissingAcsUrl)
+        } else {
+            Ok(result)
+        }
     }
 
     pub fn required_attributes(&self) -> Vec<RequiredAttribute> {
