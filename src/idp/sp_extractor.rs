@@ -16,8 +16,9 @@ pub struct Acs {
     pub url: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone)]
 pub struct AcsComplete {
+    // I don't like this name anymore than you do. Feel free to change it to something better.
     pub bind_type: BindType,
     pub url: String,
     pub is_default: bool,
@@ -58,7 +59,7 @@ impl SPMetadataExtractor {
         })
     }
 
-    pub fn acs_list(&self) -> Option<Vec<AcsComplete>> {
+    pub fn acs_list(&self) -> Result<Vec<AcsComplete>, Error> {
         let sp_descriptor = self.0.sp_sso_descriptors.as_ref()?.first()?;
         let acs_list = &sp_descriptor.assertion_consumer_services;
 
@@ -77,9 +78,9 @@ impl SPMetadataExtractor {
         }
 
         if result.is_empty() {
-            None
+            Err(Error::MissingAcsUrl)
         } else {
-            Some(result)
+            Ok(result)
         }
     }
 

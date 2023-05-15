@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use crate::attribute::{Attribute, AttributeValue};
 use crate::schema::{
     Assertion, AttributeStatement, AudienceRestriction, AuthnContext, AuthnContextClassRef,
@@ -39,7 +41,7 @@ fn build_authn_statement(class: AuthenticationContextClass) -> AuthnStatement {
 
 pub struct ResponseAttribute {
     pub required_attribute: RequiredAttribute,
-    pub values: Vec<String>,
+    pub values: Vec<Cow<'a, str>>,
 }
 
 fn build_attributes(formats_names_values: &[ResponseAttribute]) -> Vec<Attribute> {
