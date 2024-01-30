@@ -1,7 +1,5 @@
 use base64::{engine::general_purpose, Engine as _};
 use std::collections::HashMap;
-use std::convert::TryInto;
-use std::ffi::CString;
 use std::str::FromStr;
 use thiserror::Error;
 
@@ -113,7 +111,7 @@ pub fn verify_signed_xml<Bytes: AsRef<[u8]>>(
 #[cfg(feature = "xmlsec")]
 fn collect_id_attributes(doc: &mut libxml::tree::Document) -> Result<(), Error> {
     const ID_STR: &str = "ID";
-    let id_attr_name = CString::new(ID_STR).unwrap();
+    let id_attr_name = std::ffi::CString::new(ID_STR).unwrap();
 
     let mut nodes_to_visit = Vec::new();
     if let Some(root_elem) = doc.get_root_element() {
@@ -121,7 +119,7 @@ fn collect_id_attributes(doc: &mut libxml::tree::Document) -> Result<(), Error> 
     }
     while let Some(node) = nodes_to_visit.pop() {
         if let Some(id_value) = node.get_attribute(ID_STR) {
-            let id_value_cstr = CString::new(id_value).unwrap();
+            let id_value_cstr = std::ffi::CString::new(id_value).unwrap();
             let node_ptr = node.node_ptr();
             unsafe {
                 let attr =
@@ -289,7 +287,7 @@ fn get_signed_node(
             if let Some(uri) = ref_elem.get_attribute("URI") {
                 if let Some(stripped) = uri.strip_prefix('#') {
                     // prepare a XPointer context
-                    let c_uri = CString::new(stripped).unwrap();
+                    let c_uri = std::ffi::CString::new(stripped).unwrap();
                     let ctx_ptr = unsafe {
                         libxml::bindings::xmlXPtrNewContext(
                             doc.doc_ptr(),
