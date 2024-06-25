@@ -49,3 +49,11 @@ pub enum Error {
         error: crate::crypto::Error,
     },
 }
+
+#[cfg(test)]
+mod test {
+    use crate::idp::error::Error;
+    use static_assertions::assert_impl_all;
+
+    assert_impl_all!(Error: Send, Sync);
+}

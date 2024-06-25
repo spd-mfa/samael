@@ -83,21 +83,26 @@ fn test_signed_response() {
                 name: attr.1.to_string(),
                 format: Some(attr.0.to_string()),
             },
-            value: attr.2,
+            values: vec![attr.2.to_string()],
         })
         .collect::<Vec<ResponseAttribute>>();
 
     // create and sign a response
+    let params = ResponseParams {
+        idp_x509_cert_der: idp_cert.as_slice(),
+        subject_name_id: "testuser@example.com",
+        audience: "https://sp.example.com/audience",
+        acs_url: "https://sp.example.com/acs",
+        issuer: "https://idp.example.com",
+        in_response_to_id: &verified.id.as_str(),
+        attributes: &attrs,
+        authentication_context: AuthenticationContextClass::default(),
+        not_before: None,
+        not_on_or_after: Some(Utc::now()),
+    };
+
     let out_response = idp
-        .sign_authn_response(
-            idp_cert.as_slice(),
-            "testuser@example.com",
-            "https://sp.example.com/audience",
-            "https://sp.example.com/acs",
-            "https://idp.example.com",
-            verified.id.as_str(),
-            &attrs,
-        )
+        .sign_authn_response(&params)
         .expect("failed to created and sign response");
 
     let out_xml = out_response
@@ -147,16 +152,21 @@ fn test_signed_response_fingerprint() {
     };
 
     let idp_cert = idp.create_certificate(&params).expect("idp cert error");
+    let params = ResponseParams {
+        idp_x509_cert_der: idp_cert.as_slice(),
+        subject_name_id: "testuser@example.com",
+        audience: "https://sp.example.com/audience",
+        acs_url: "https://sp.example.com/acs",
+        issuer: "https://idp.example.com",
+        in_response_to_id: "",
+        attributes: &[],
+        authentication_context: AuthenticationContextClass::default(),
+        not_before: None,
+        not_on_or_after: Some(Utc::now()),
+    };
+
     let response = idp
-        .sign_authn_response(
-            idp_cert.as_slice(),
-            "testuser@example.com",
-            "https://sp.example.com/audience",
-            "https://sp.example.com/acs",
-            "https://idp.example.com",
-            "",
-            &[],
-        )
+        .sign_authn_response(&params)
         .expect("failed to created and sign response");
     let base64_cert = response
         .signature

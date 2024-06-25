@@ -12,8 +12,9 @@ pub mod service_provider;
 pub mod signature;
 #[cfg(feature = "xmlsec")]
 mod xmlsec;
-
-mod traits;
+#[cfg(feature = "xmlsec")]
+pub use xmlsec::XmlSecError;
+pub mod traits;
 
 #[macro_use]
 extern crate derive_builder;
