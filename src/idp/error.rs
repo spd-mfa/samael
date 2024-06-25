@@ -50,7 +50,6 @@ pub enum Error {
     },
 }
 
-
 #[cfg(test)]
 mod test {
     use crate::idp::error::Error;
