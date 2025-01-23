@@ -632,7 +632,7 @@ impl TryFrom<&StatusCode> for Event<'_> {
 }
 
 #[derive(Clone, Debug, Deserialize, Hash, Eq, PartialEq, Ord, PartialOrd)]
-pub struct StatusMessage(Option<String>);
+pub struct StatusMessage(pub Option<String>);
 
 impl StatusMessage {
     fn name() -> &'static str {
