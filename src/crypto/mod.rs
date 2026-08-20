@@ -35,6 +35,9 @@ pub enum CryptoError {
     #[error("Crypto Provider Error")]
     CryptoProviderError(#[source] Box<dyn std::error::Error + Send + Sync>),
 
+    #[error("Crypto Provider Initialization Error")]
+    CryptoProviderInitError(#[source] Box<dyn std::error::Error + Send + Sync>),
+
     #[error("The encryption method {method} is not supported for the assertion key")]
     EncryptedAssertionKeyMethodUnsupported { method: String },
 

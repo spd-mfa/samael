@@ -79,7 +79,11 @@ pub enum XmlSecProviderError {
 
 impl From<wrapper::XmlSecError> for CryptoError {
     fn from(value: wrapper::XmlSecError) -> Self {
-        CryptoError::CryptoProviderError(Box::new(value))
+        if value.is_init_error() {
+            CryptoError::CryptoProviderInitError(Box::new(value))
+        } else {
+            CryptoError::CryptoProviderError(Box::new(value))
+        }
     }
 }
 
