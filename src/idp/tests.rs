@@ -100,7 +100,7 @@ fn test_signed_response() {
 
     // create and sign a response
     let params = ResponseParams {
-        idp_x509_cert_der: idp_cert.as_slice(),
+        idp_x509_cert_der: idp_cert.der_data(),
         subject_name_id: "testuser@example.com",
         audience: "https://sp.example.com/audience",
         acs_url: "https://sp.example.com/acs",
@@ -166,7 +166,7 @@ fn test_signed_response_fingerprint() {
 
     let idp_cert = idp.create_certificate(&params).expect("idp cert error");
     let params = ResponseParams {
-        idp_x509_cert_der: idp_cert.as_slice(),
+        idp_x509_cert_der: idp_cert.der_data(),
         subject_name_id: "testuser@example.com",
         audience: "https://sp.example.com/audience",
         acs_url: "https://sp.example.com/acs",

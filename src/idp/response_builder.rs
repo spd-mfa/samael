@@ -135,7 +135,10 @@ fn build_response(params: &ResponseParams) -> Response {
         destination: Some(params.acs_url.to_string()),
         consent: None,
         issuer: Some(issuer),
-        signature: Some(Signature::template(&response_id, params.idp_x509_cert_der)),
+        signature: Some(Signature::template(
+            &response_id,
+            &CertificateDer::from(params.idp_x509_cert_der.to_vec()),
+        )),
         status: Some(Status {
             status_code: StatusCode {
                 value: Some("urn:oasis:names:tc:SAML:2.0:status:Success".to_string()),

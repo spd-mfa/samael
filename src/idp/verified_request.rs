@@ -62,7 +62,11 @@ impl<'a> UnverifiedAuthnRequest<'a> {
         &self,
         der_cert: &[u8],
     ) -> Result<VerifiedAuthnRequest, Error> {
-        verify_signed_xml(self.xml.as_bytes(), der_cert, Some("ID"))?;
+        Crypto::verify_signed_xml(
+            self.xml.as_bytes(),
+            &CertificateDer::from(der_cert.to_vec()),
+            Some("ID"),
+        )?;
         Ok(VerifiedAuthnRequest(self.request.clone()))
     }
 }
