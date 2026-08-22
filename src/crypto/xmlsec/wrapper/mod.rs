@@ -27,3 +27,4 @@ pub use self::keys::XmlSecKey;
 pub use self::keys::XmlSecKeyFormat;
 pub use self::xmldsig::VerifiedReference;
 pub use self::xmldsig::XmlSecSignatureContext;
+pub(crate) use self::xmlsec_internal::guarantee_xmlsec_init;

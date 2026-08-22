@@ -18,6 +18,14 @@ pub type Crypto = XmlSec;
 #[cfg(not(feature = "xmlsec"))]
 pub type Crypto = crypto_disabled::NoCrypto;
 
+/// Eagerly initializes the crypto provider's global state, which is otherwise
+/// initialized lazily on first use. Idempotent and retryable, so callers can
+/// retry transient startup failures before serving requests.
+#[cfg(feature = "xmlsec")]
+pub fn init() -> Result<(), CryptoError> {
+    xmlsec::init()
+}
+
 #[derive(Debug, Error)]
 pub enum CryptoError {
     #[error("Encountered an invalid signature")]

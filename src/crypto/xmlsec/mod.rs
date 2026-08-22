@@ -83,6 +83,12 @@ impl From<wrapper::XmlSecError> for CryptoError {
     }
 }
 
+/// Eagerly initializes the xmlsec crypto provider's global state.
+pub fn init() -> Result<(), CryptoError> {
+    wrapper::guarantee_xmlsec_init()?;
+    Ok(())
+}
+
 impl From<XmlSecProviderError> for CryptoError {
     fn from(value: XmlSecProviderError) -> Self {
         CryptoError::CryptoProviderError(Box::new(value))
