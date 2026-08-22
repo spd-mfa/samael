@@ -16,6 +16,9 @@ lazy_static! {
     static ref XMLSEC: Mutex<Option<XmlSecContext>> = Mutex::new(None);
 }
 
+/// Ensures the global XmlSec context is initialized. Idempotent and retryable
+/// on failure, since failed initialization leaves the global state unset so a
+/// later call re-attempts it.
 pub fn guarantee_xmlsec_init() -> XmlSecResult<()> {
     let mut inner = XMLSEC
         .lock()

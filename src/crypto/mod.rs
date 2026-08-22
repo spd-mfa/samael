@@ -18,6 +18,14 @@ pub type Crypto = XmlSec;
 #[cfg(not(feature = "xmlsec"))]
 pub type Crypto = crypto_disabled::NoCrypto;
 
+/// Eagerly initializes the crypto provider's global state, which is otherwise
+/// initialized lazily on first use. Idempotent and retryable, so callers can
+/// retry transient startup failures before serving requests.
+#[cfg(feature = "xmlsec")]
+pub fn init() -> Result<(), CryptoError> {
+    xmlsec::init()
+}
+
 #[derive(Debug, Error)]
 pub enum CryptoError {
     #[error("Encountered an invalid signature")]
@@ -34,9 +42,6 @@ pub enum CryptoError {
 
     #[error("Crypto Provider Error")]
     CryptoProviderError(#[source] Box<dyn std::error::Error + Send + Sync>),
-
-    #[error("Crypto Provider Initialization Error")]
-    CryptoProviderInitError(#[source] Box<dyn std::error::Error + Send + Sync>),
 
     #[error("The encryption method {method} is not supported for the assertion key")]
     EncryptedAssertionKeyMethodUnsupported { method: String },

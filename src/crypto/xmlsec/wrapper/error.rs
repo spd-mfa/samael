@@ -32,21 +32,6 @@ pub enum XmlSecError {
     VerifyError,
 }
 
-impl XmlSecError {
-    pub fn is_init_error(&self) -> bool {
-        match self {
-            Self::XmlSecAbiMismatch
-            | Self::XmlSecInitError
-            | Self::ContextInitError
-            | Self::CryptoInitOpenSSLError
-            | Self::CryptoInitOpenSSLAppError => true,
-            #[cfg(xmlsec_dynamic)]
-            Self::CryptoLoadLibraryError => true,
-            _ => false,
-        }
-    }
-}
-
 impl std::fmt::Display for XmlSecError {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {

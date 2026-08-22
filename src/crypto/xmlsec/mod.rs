@@ -79,12 +79,14 @@ pub enum XmlSecProviderError {
 
 impl From<wrapper::XmlSecError> for CryptoError {
     fn from(value: wrapper::XmlSecError) -> Self {
-        if value.is_init_error() {
-            CryptoError::CryptoProviderInitError(Box::new(value))
-        } else {
-            CryptoError::CryptoProviderError(Box::new(value))
-        }
+        CryptoError::CryptoProviderError(Box::new(value))
     }
+}
+
+/// Eagerly initializes the xmlsec crypto provider's global state.
+pub fn init() -> Result<(), CryptoError> {
+    wrapper::guarantee_xmlsec_init()?;
+    Ok(())
 }
 
 impl From<XmlSecProviderError> for CryptoError {
